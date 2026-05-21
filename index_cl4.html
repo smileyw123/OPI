@@ -10,16 +10,16 @@
 <link rel="stylesheet" as="style" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
 <style>
   :root {
-    --bg: #0a0a0a;
-    --panel: #131316;
-    --panel-2: #1a1a1f;
-    --border: #26262d;
-    --text: #e8e8ec;
-    --muted: #8a8a93;
-    --cyan: #00C8FF;
-    --yellow: #FFD23F;
-    --pink: #FF5C8A;
-    --green: #4ADE80;
+    --bg: #14141c;
+    --panel: #1c1c25;
+    --panel-2: #22222d;
+    --border: #34344a;
+    --text: #f0f0f5;
+    --muted: #9da0ab;
+    --cyan: #8ED9F0;
+    --yellow: #F5D88C;
+    --pink: #F5A8C5;
+    --green: #A8E6BD;
     --shadow: 0 4px 24px rgba(0,0,0,0.4);
   }
 
@@ -29,8 +29,8 @@
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
     background-image:
-      radial-gradient(circle at 20% 0%, rgba(0,200,255,0.06) 0%, transparent 40%),
-      radial-gradient(circle at 80% 100%, rgba(255,92,138,0.04) 0%, transparent 40%);
+      radial-gradient(circle at 20% 0%, rgba(142,217,240,0.06) 0%, transparent 40%),
+      radial-gradient(circle at 80% 100%, rgba(245,168,197,0.04) 0%, transparent 40%);
     color: var(--text);
     min-height: 100vh;
     padding: 24px 16px 60px;
@@ -63,7 +63,7 @@
     font-size: 32px;
     font-weight: 800;
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #fff 0%, #9ad8ff 100%);
+    background: linear-gradient(135deg, #fff 0%, #B8E4F2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -145,7 +145,7 @@
     background: var(--cyan);
     border: 3px solid var(--bg);
     cursor: pointer;
-    box-shadow: 0 0 0 1px var(--cyan), 0 0 12px rgba(0,200,255,0.5);
+    box-shadow: 0 0 0 1px var(--cyan), 0 0 8px rgba(142,217,240,0.35);
     transition: transform 0.1s;
   }
   input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
@@ -157,15 +157,15 @@
 
   input[type="range"].yellow::-webkit-slider-thumb {
     background: var(--yellow);
-    box-shadow: 0 0 0 1px var(--yellow), 0 0 12px rgba(255,210,63,0.5);
+    box-shadow: 0 0 0 1px var(--yellow), 0 0 8px rgba(245,216,140,0.35);
   }
   input[type="range"].pink::-webkit-slider-thumb {
     background: var(--pink);
-    box-shadow: 0 0 0 1px var(--pink), 0 0 12px rgba(255,92,138,0.5);
+    box-shadow: 0 0 0 1px var(--pink), 0 0 8px rgba(245,168,197,0.35);
   }
   input[type="range"].green::-webkit-slider-thumb {
     background: var(--green);
-    box-shadow: 0 0 0 1px var(--green), 0 0 12px rgba(74,222,128,0.5);
+    box-shadow: 0 0 0 1px var(--green), 0 0 8px rgba(168,230,189,0.35);
   }
 
   .slider-scale {
@@ -191,8 +191,8 @@
 
   .total-fund.inactive {
     opacity: 0.55;
-    background: rgba(255, 92, 138, 0.04);
-    border-color: rgba(255, 92, 138, 0.3);
+    background: rgba(245, 168, 197, 0.04);
+    border-color: rgba(245, 168, 197, 0.3);
   }
 
   .total-fund.inactive .total-fund-value {
@@ -211,7 +211,7 @@
     flex-wrap: wrap;
     gap: 8px;
     padding: 10px 14px;
-    background: rgba(0, 200, 255, 0.04);
+    background: rgba(142, 217, 240, 0.04);
     border: 1px dashed var(--border);
     border-radius: 8px;
     margin-top: 16px;
@@ -386,22 +386,22 @@
   }
 
   .div-btn.cyan.active {
-    background: rgba(0, 200, 255, 0.12);
+    background: rgba(142, 217, 240, 0.12);
     border-color: var(--cyan);
     color: var(--cyan);
-    box-shadow: 0 0 12px rgba(0, 200, 255, 0.2);
+    box-shadow: 0 0 8px rgba(142, 217, 240, 0.15);
   }
   .div-btn.yellow.active {
-    background: rgba(255, 210, 63, 0.12);
+    background: rgba(245, 216, 140, 0.12);
     border-color: var(--yellow);
     color: var(--yellow);
-    box-shadow: 0 0 12px rgba(255, 210, 63, 0.2);
+    box-shadow: 0 0 8px rgba(245, 216, 140, 0.15);
   }
   .div-btn.pink.active {
-    background: rgba(255, 92, 138, 0.12);
+    background: rgba(245, 168, 197, 0.12);
     border-color: var(--pink);
     color: var(--pink);
-    box-shadow: 0 0 12px rgba(255, 92, 138, 0.2);
+    box-shadow: 0 0 8px rgba(245, 168, 197, 0.15);
   }
 
   /* CL4 selector */
@@ -437,10 +437,10 @@
   }
 
   .cl4-btn.cyan.active {
-    background: rgba(0, 200, 255, 0.12);
+    background: rgba(142, 217, 240, 0.12);
     border-color: var(--cyan);
     color: var(--cyan);
-    box-shadow: 0 0 12px rgba(0, 200, 255, 0.2);
+    box-shadow: 0 0 8px rgba(142, 217, 240, 0.15);
   }
 
   .cl4-grade-field {
@@ -538,8 +538,8 @@
 
   /* Reference Card */
   .ref-card {
-    background: rgba(74, 222, 128, 0.06);
-    border: 1px solid rgba(74, 222, 128, 0.2);
+    background: rgba(168, 230, 189, 0.06);
+    border: 1px solid rgba(168, 230, 189, 0.2);
     border-radius: 12px;
     padding: 16px;
   }
@@ -586,7 +586,7 @@
   .opi-cap-hint {
     margin-top: 8px;
     padding: 6px 10px;
-    background: rgba(74, 222, 128, 0.08);
+    background: rgba(168, 230, 189, 0.08);
     border-left: 2px solid var(--green);
     border-radius: 4px;
     font-size: 11px;
