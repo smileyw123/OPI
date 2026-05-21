@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Samsung 성과급 시뮬레이터</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --panel: #131316;
+    --panel-2: #1a1a1f;
+    --border: #26262d;
+    --text: #e8e8ec;
+    --muted: #8a8a93;
+    --cyan: #00C8FF;
+    --yellow: #FFD23F;
+    --pink: #FF5C8A;
+    --green: #4ADE80;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(0,200,255,0.06) 0%, transparent 40%),
+      radial-gradient(circle at 80% 100%, rgba(255,92,138,0.04) 0%, transparent 40%);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border: 1px solid var(--cyan);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--cyan);
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #fff 0%, #9ad8ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .card-title {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+  }
+
+  .card-title-note {
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    margin-left: 6px;
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  .field:last-child { margin-bottom: 0; }
+
+  .field-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+
+  .field-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .field-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cyan);
+  }
+
+  .field-value.yellow { color: var(--yellow); }
+  .field-value.pink { color: var(--pink); }
+  .field-value.green { color: var(--green); }
+
+  /* Slider */
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #2a2a32;
+    outline: none;
+    margin: 6px 0;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--cyan);
+    border: 3px solid var(--bg);
+    cursor: pointer;
+    box-shadow: 0 0 0 1px var(--cyan), 0 0 12px rgba(0,200,255,0.5);
+    transition: transform 0.1s;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+  input[type="range"]::-moz-range-thumb {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--cyan); border: 3px solid var(--bg);
+    cursor: pointer;
+  }
+
+  input[type="range"].yellow::-webkit-slider-thumb {
+    background: var(--yellow);
+    box-shadow: 0 0 0 1px var(--yellow), 0 0 12px rgba(255,210,63,0.5);
+  }
+  input[type="range"].pink::-webkit-slider-thumb {
+    background: var(--pink);
+    box-shadow: 0 0 0 1px var(--pink), 0 0 12px rgba(255,92,138,0.5);
+  }
+  input[type="range"].green::-webkit-slider-thumb {
+    background: var(--green);
+    box-shadow: 0 0 0 1px var(--green), 0 0 12px rgba(74,222,128,0.5);
+  }
+
+  .slider-scale {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .total-fund {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    transition: opacity 0.2s;
+  }
+
+  .total-fund.inactive {
+    opacity: 0.55;
+    background: rgba(255, 92, 138, 0.04);
+    border-color: rgba(255, 92, 138, 0.3);
+  }
+
+  .total-fund.inactive .total-fund-value {
+    color: var(--muted);
+  }
+
+  .total-fund.inactive #totalOk {
+    color: var(--pink);
+    font-weight: 600;
+  }
+
+  .fixed-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(0, 200, 255, 0.04);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    margin-top: 16px;
+    font-size: 12px;
+  }
+
+  .fixed-info-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .fixed-info-label {
+    color: var(--muted);
+  }
+
+  .fixed-info-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+  }
+  .fixed-info-value.yellow { color: var(--yellow); }
+  .fixed-info-value.pink   { color: var(--pink); }
+  .fixed-info-value.cyan   { color: var(--cyan); }
+
+  .fixed-info-sep {
+    color: var(--border);
+  }
+
+  .total-fund-label {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .total-fund-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .total-fund-value small {
+    font-size: 13px;
+    color: var(--muted);
+    margin-left: 8px;
+    font-weight: 400;
+  }
+
+  /* Combined Division Card */
+  .div-card-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .div-card {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px 14px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .div-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 3px;
+    background: var(--cyan);
+  }
+  .div-card.yellow::before { background: var(--yellow); }
+  .div-card.pink::before { background: var(--pink); }
+
+  .div-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .div-card-name {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--cyan);
+    letter-spacing: -0.02em;
+  }
+  .div-card.yellow .div-card-name { color: var(--yellow); }
+  .div-card.pink .div-card-name { color: var(--pink); }
+
+  .div-card-result {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  .div-card-result .pct {
+    color: var(--text);
+    font-size: 17px;
+  }
+  .div-card-result .amt {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .div-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .div-card-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .div-card-field {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .div-card-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+
+  .div-card-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  /* My Bonus Calculator */
+  .div-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .div-btn {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 10px 8px;
+    border-radius: 8px;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .div-btn:hover {
+    border-color: #444;
+    color: var(--text);
+  }
+
+  .div-btn.cyan.active {
+    background: rgba(0, 200, 255, 0.12);
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 12px rgba(0, 200, 255, 0.2);
+  }
+  .div-btn.yellow.active {
+    background: rgba(255, 210, 63, 0.12);
+    border-color: var(--yellow);
+    color: var(--yellow);
+    box-shadow: 0 0 12px rgba(255, 210, 63, 0.2);
+  }
+  .div-btn.pink.active {
+    background: rgba(255, 92, 138, 0.12);
+    border-color: var(--pink);
+    color: var(--pink);
+    box-shadow: 0 0 12px rgba(255, 92, 138, 0.2);
+  }
+
+  /* CL4 selector */
+  .cl4-selector {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .cl4-grade-selector {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .cl4-btn {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 10px 8px;
+    border-radius: 8px;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .cl4-btn:hover {
+    border-color: #444;
+    color: var(--text);
+  }
+
+  .cl4-btn.cyan.active {
+    background: rgba(0, 200, 255, 0.12);
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 12px rgba(0, 200, 255, 0.2);
+  }
+
+  .cl4-grade-field {
+    transition: opacity 0.2s, max-height 0.3s;
+  }
+
+  .cl4-grade-field.hidden {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+  }
+
+  .cl4-mult-label {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--yellow);
+    font-weight: 700;
+    margin-left: 2px;
+  }
+
+  .my-result {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .my-result-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    margin: 8px 0;
+    border-top: 1px dashed var(--border);
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .my-result-main.subtotal {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 6px;
+  }
+
+  .my-result-main.net {
+    border-top: 1px dashed var(--border);
+    margin-top: 0;
+    padding-top: 8px;
+    border-bottom: none;
+  }
+
+  .my-result-label {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  .my-result-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .my-result-value.pink { color: var(--pink); }
+  .my-result-value.green { color: var(--green); }
+  .my-result-value.cyan { color: var(--cyan); }
+
+  .my-result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 4px 0;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .my-result-row > span:last-child {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .tax-note {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+    margin: 6px 0 4px;
+    font-style: italic;
+  }
+
+  /* Reference Card */
+  .ref-card {
+    background: rgba(74, 222, 128, 0.06);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .ref-title {
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ref-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .ref-body strong { color: var(--text); }
+  .ref-body .highlight {
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .footer-note {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  .ratio-display {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--pink);
+    font-weight: 700;
+    font-size: 20px;
+  }
+
+  .opi-cap-hint {
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: rgba(74, 222, 128, 0.08);
+    border-left: 2px solid var(--green);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .opi-cap-hint span {
+    font-family: 'JetBrains Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    color: var(--green);
+    font-weight: 700;
+    margin-left: 4px;
+  }
+
+  /* Mobile */
+  @media (max-width: 480px) {
+    body { padding: 16px 12px 40px; }
+    h1 { font-size: 26px; }
+    .card { padding: 18px 14px; }
+
+    .div-card {
+      padding: 12px 14px 12px 16px;
+    }
+    .div-card-name { font-size: 15px; }
+    .div-card-result { font-size: 15px; }
+    .div-card-result .pct { font-size: 15px; }
+    .div-card-result .amt { font-size: 12px; }
+    .div-card-row { gap: 28px; }
+    .div-card-label { font-size: 10px; }
+    .div-card-value { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="badge">OPI 계산기 (26년도 기준)</div>
+  </header>
+
+  <!-- 주요 변수 -->
+  <div class="card">
+    <div class="field">
+      <div class="field-row">
+        <span class="field-label">영업이익</span>
+        <span class="field-value" id="profitDisplay">350조</span>
+      </div>
+      <input type="range" id="profitSlider" min="50" max="500" step="10" value="350">
+      <div class="slider-scale">
+        <span>50조</span><span>200조</span><span>350조</span><span>500조</span>
+      </div>
+    </div>
+
+    <div class="fixed-info">
+      <span class="fixed-info-item"><span class="fixed-info-label">재원 비율</span> <span class="fixed-info-value yellow">10.5 %</span></span>
+      <span class="fixed-info-sep">·</span>
+      <span class="fixed-info-item"><span class="fixed-info-label">부문 : 사업부</span> <span class="fixed-info-value pink">4 : 6</span></span>
+      <span class="fixed-info-sep">·</span>
+      <span class="fixed-info-item"><span class="fixed-info-label">지급 조건</span> <span class="fixed-info-value cyan">영업이익 ≥ 200조</span></span>
+    </div>
+
+    <div class="total-fund">
+      <span class="total-fund-label">총 재원</span>
+      <span class="total-fund-value">
+        <span id="totalTrillion">36.8조</span>
+        <small id="totalOk">(367,500억원)</small>
+      </span>
+    </div>
+  </div>
+
+  <!-- 사업부별 특별성과급 비율 -->
+  <div class="card">
+    <div class="card-title">사업부별 특별성과급 비율 <span class="card-title-note">*평균연봉 8,000만원 기준</span></div>
+    <div class="div-card-stack">
+      <div class="div-card cyan">
+        <div class="div-card-header">
+          <div class="div-card-name">메모리</div>
+          <div class="div-card-result" id="memTotal">0%</div>
+        </div>
+        <div class="div-card-body">
+          <div class="div-card-row">
+            <div class="div-card-field">
+              <span class="div-card-label">인원</span>
+              <span class="div-card-value">27,400 명</span>
+            </div>
+            <div class="div-card-field">
+              <span class="div-card-label">가중치</span>
+              <span class="div-card-value">1.0</span>
+            </div>
+          </div>
+          <div class="div-card-row">
+            <div class="div-card-field">
+              <span class="div-card-label">부문</span>
+              <span class="div-card-value" id="memDept">0만원</span>
+            </div>
+            <div class="div-card-field">
+              <span class="div-card-label">사업부</span>
+              <span class="div-card-value" id="memDiv">0만원</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="div-card yellow">
+        <div class="div-card-header">
+          <div class="div-card-name">공통</div>
+          <div class="div-card-result" id="comTotal">0%</div>
+        </div>
+        <div class="div-card-body">
+          <div class="div-card-row">
+            <div class="div-card-field">
+              <span class="div-card-label">인원</span>
+              <span class="div-card-value">29,000 명</span>
+            </div>
+            <div class="div-card-field">
+              <span class="div-card-label">가중치</span>
+              <span class="div-card-value">0.7</span>
+            </div>
+          </div>
+          <div class="div-card-row">
+            <div class="div-card-field">
+              <span class="div-card-label">부문</span>
+              <span class="div-card-value" id="comDept">0만원</span>
+            </div>
+            <div class="div-card-field">
+              <span class="div-card-label">사업부</span>
+              <span class="div-card-value" id="comDiv">0만원</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="div-card pink">
+        <div class="div-card-header">
+          <div class="div-card-name">비메모리</div>
+          <div class="div-card-result" id="lepTotal">0%</div>
+        </div>
+        <div class="div-card-body">
+          <div class="div-card-row">
+            <div class="div-card-field">
+              <span class="div-card-label">인원</span>
+              <span class="div-card-value">20,900 명</span>
+            </div>
+            <div class="div-card-field">
+              <span class="div-card-label">가중치</span>
+              <span class="div-card-value">0.0</span>
+            </div>
+          </div>
+          <div class="div-card-row">
+            <div class="div-card-field">
+              <span class="div-card-label">부문</span>
+              <span class="div-card-value" id="lepDept">0만원</span>
+            </div>
+            <div class="div-card-field">
+              <span class="div-card-label">사업부</span>
+              <span class="div-card-value" id="lepDiv">0만원</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CL4 여부 -->
+  <div class="card">
+    <div class="field">
+      <div class="field-row">
+        <span class="field-label">CL4 대상자</span>
+      </div>
+      <div class="cl4-selector">
+        <button class="cl4-btn cyan active" data-cl4="no" type="button">아니오</button>
+        <button class="cl4-btn cyan" data-cl4="yes" type="button">예</button>
+      </div>
+    </div>
+
+    <div class="field cl4-grade-field">
+      <div class="field-row">
+        <span class="field-label">고과</span>
+        <span class="field-value yellow" id="cl4GradeDisplay">—</span>
+      </div>
+      <div class="cl4-selector cl4-grade-selector">
+        <button class="cl4-btn cyan" data-grade="가" type="button">가</button>
+        <button class="cl4-btn cyan" data-grade="나" type="button">나</button>
+        <button class="cl4-btn cyan" data-grade="다" type="button">다</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 내 성과급 계산 -->
+  <div class="card">
+    <div class="card-title">내 성과급 계산</div>
+
+    <div class="field">
+      <div class="field-row">
+        <span class="field-label">내 사업부</span>
+      </div>
+      <div class="div-selector">
+        <button class="div-btn cyan active" data-div="mem" type="button">메모리</button>
+        <button class="div-btn yellow" data-div="com" type="button">공통</button>
+        <button class="div-btn pink" data-div="lep" type="button">비메모리</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-row">
+        <span class="field-label">내 연봉</span>
+        <span class="field-value green" id="mySalaryDisplay">8,000만원</span>
+      </div>
+      <input type="range" id="mySalarySlider" class="green" min="5000" max="20000" step="500" value="8000">
+      <div class="slider-scale">
+        <span>5,000</span><span>10,000</span><span>15,000</span><span>20,000</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-row">
+        <span class="field-label">기존 OPI 비율</span>
+        <span class="field-value yellow" id="myOpiRateDisplay">50%</span>
+      </div>
+      <input type="range" id="myOpiRateSlider" class="yellow" min="0" max="100" step="5" value="50">
+      <div class="slider-scale">
+        <span>0%</span><span>30%</span><span>60%</span><span>100%</span>
+      </div>
+    </div>
+
+    <div class="my-result">
+      <div class="my-result-row">
+        <span>기존 OPI</span>
+        <span id="myOpiDisplay">0만원</span>
+      </div>
+      <div class="my-result-row">
+        <span>특별 성과급</span>
+        <span id="myBonusDisplay">0만원</span>
+      </div>
+      <div class="my-result-row" id="cl4ExtraRow" style="display:none">
+        <span>CL4 가산 <span class="cl4-mult-label" id="cl4MultLabel">(다)</span></span>
+        <span id="myCl4ExtraDisplay">0만원</span>
+      </div>
+      <div class="my-result-main">
+        <span class="my-result-label">내 성과급 (세전)</span>
+        <span class="my-result-value cyan" id="myTotalDisplay">0만원</span>
+      </div>
+      <div class="tax-note">세금 (연봉+성과급 합산 기준 한계세 · 4대보험 포함)</div>
+      <div class="my-result-row">
+        <span>종합소득세</span>
+        <span id="myTaxDisplay">0만원</span>
+      </div>
+      <div class="my-result-row">
+        <span>지방소득세</span>
+        <span id="myLocalDisplay">0만원</span>
+      </div>
+      <div class="my-result-row">
+        <span>국민연금</span>
+        <span id="myNpDisplay">0만원</span>
+      </div>
+      <div class="my-result-row">
+        <span>건강보험</span>
+        <span id="myHiDisplay">0만원</span>
+      </div>
+      <div class="my-result-row">
+        <span>장기요양보험</span>
+        <span id="myLtcDisplay">0만원</span>
+      </div>
+      <div class="my-result-row">
+        <span>고용보험</span>
+        <span id="myEmpDisplay">0만원</span>
+      </div>
+      <div class="my-result-main subtotal">
+        <span class="my-result-label">총 공제액</span>
+        <span class="my-result-value pink" id="myDeductDisplay">0만원 (0%)</span>
+      </div>
+      <div class="my-result-main net">
+        <span class="my-result-label">실수령액 (세후)</span>
+        <span class="my-result-value green" id="myNetDisplay">0만원</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 참고 -->
+  <div class="card">
+    <div class="card-title">참고 · 비교</div>
+    <div class="ref-card">
+      <div class="ref-title">💡 SK하이닉스 성과급 예상치</div>
+      <div class="ref-body">
+        영업이익 <strong>250조</strong> · 재원비율 <strong>10%</strong> · 직원 <strong>35,000명</strong> 기준<br>
+        인당 예상 <span class="highlight">≈ 7.14억</span> <span style="font-size:11px">(단일 사업부, 균등 분배 가정)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    * 만원 단위 반올림 / 개인 호봉·고과 미반영 추정치<br>
+    * 세금: 연봉+성과급 합산 한계세 기준 (종합소득세 + 지방소득세 + 4대보험)<br>
+    * 4대보험 (2025년 요율): 국민연금 4.5% · 건강보험 3.545% · 장기요양 12.95% · 고용보험 0.9% (상한 cap 적용)<br>
+    * 인적공제·세액공제 등 개인별 공제는 미반영<br>
+    * 분배식: 부문풀=전원 균등, 사업부풀=가중인원 비례<br>
+    * 영업이익 200조 이상 시 특별성과급 지급
+  </div>
+</div>
+
+<script>
+(function() {
+  // ============================================
+  // 한국 세제 계산 (2025년 기준, 만원 단위)
+  // ============================================
+
+  // 종합소득세 누진세율 [상한, 세율, 누진공제]
+  const TAX_BRACKETS = [
+    [1400,   0.06, 0],
+    [5000,   0.15, 126],
+    [8800,   0.24, 576],
+    [15000,  0.35, 1544],
+    [30000,  0.38, 1994],
+    [50000,  0.40, 2594],
+    [100000, 0.42, 3594],
+    [Infinity, 0.45, 6594]
+  ];
+
+  // 4대보험 (근로자 부담)
+  const NP_RATE = 0.045;              // 국민연금 4.5%
+  const NP_BASE_CAP = 7404;           // 월 617만원 × 12개월 (2025 상한)
+  const HI_RATE = 0.03545;            // 건강보험 3.545%
+  const HI_BASE_CAP = 15247;          // 월 1,270만원 × 12개월 (2025 상한)
+  const LTC_RATE = 0.1295;            // 장기요양 = 건보료 × 12.95%
+  const EMP_RATE = 0.009;             // 고용보험 0.9%
+
+  // 근로소득공제 (만원)
+  function calcSalaryDeduction(grossSalary) {
+    if (grossSalary <= 500) return grossSalary * 0.7;
+    if (grossSalary <= 1500) return 350 + (grossSalary - 500) * 0.4;
+    if (grossSalary <= 4500) return 750 + (grossSalary - 1500) * 0.15;
+    if (grossSalary <= 10000) return 1200 + (grossSalary - 4500) * 0.05;
+    return Math.min(2000, 1475 + (grossSalary - 10000) * 0.02);
+  }
+
+  // 종합소득세
+  function calcIncomeTax(grossIncome) {
+    if (grossIncome <= 0) return 0;
+    const deduction = calcSalaryDeduction(grossIncome);
+    const taxable = Math.max(0, grossIncome - deduction);
+    for (const [cap, rate, deduct] of TAX_BRACKETS) {
+      if (taxable <= cap) {
+        return Math.max(0, taxable * rate - deduct);
+      }
+    }
+    return 0;
+  }
+
+  // 4대보험 전체 (각 항목별)
+  function calcInsurance(annualIncome) {
+    if (annualIncome <= 0) return { np: 0, hi: 0, ltc: 0, emp: 0 };
+    const npBase = Math.min(annualIncome, NP_BASE_CAP);
+    const hiBase = Math.min(annualIncome, HI_BASE_CAP);
+    const np = npBase * NP_RATE;
+    const hi = hiBase * HI_RATE;
+    const ltc = hi * LTC_RATE;
+    const emp = annualIncome * EMP_RATE;
+    return { np, hi, ltc, emp };
+  }
+
+  // 연간 총 공제액 산출
+  function calcAllDeductions(annualIncome) {
+    const incomeTax = calcIncomeTax(annualIncome);
+    const localTax = incomeTax * 0.1;
+    const ins = calcInsurance(annualIncome);
+    return {
+      incomeTax,
+      localTax,
+      np: ins.np,
+      hi: ins.hi,
+      ltc: ins.ltc,
+      emp: ins.emp
+    };
+  }
+
+  // 기존 calcTax는 호환성을 위해 단독 세금만 계산 (위쪽 결과 카드에서 사용)
+  function calcTax(amountManwon) {
+    if (amountManwon <= 0) return 0;
+    for (const [cap, rate, deduct] of TAX_BRACKETS) {
+      if (amountManwon <= cap) {
+        return Math.max(0, amountManwon * rate - deduct);
+      }
+    }
+    return 0;
+  }
+
+  function fmt(n) {
+    return Math.round(n).toLocaleString('ko-KR') + '만원';
+  }
+
+  function fmtShort(n) {
+    return Math.round(n).toLocaleString('ko-KR');
+  }
+
+  function fmtCombined(amount, salary) {
+    if (salary <= 0) return '—';
+    const pct = Math.round((amount / salary) * 100);
+    const amt = Math.round(amount).toLocaleString('ko-KR');
+    return '<span class="pct">' + pct + '%</span> <span class="amt">(' + amt + '만원)</span>';
+  }
+
+  // Get elements
+  const profitSlider = document.getElementById('profitSlider');
+  const mySalarySlider = document.getElementById('mySalarySlider');
+  const myOpiRateSlider = document.getElementById('myOpiRateSlider');
+
+  // ─── 확정된 상수 ───
+  const RATE = 10.5;                  // 성과급 재원 비율 (%)
+  const TRIGGER_PROFIT = 200;         // 특별성과급 지급 조건 (영업이익 ≥ 200조)
+  const DEPT_RATIO = 4;               // 부문 풀 비율 (4:6)
+  const DIV_RATIO  = 6;               // 사업부 풀 비율
+  const MEM_HEAD = 27400;             // 메모리 인원
+  const COM_HEAD = 29000;             // 공통 인원
+  const LEP_HEAD = 20900;             // 비메모리 인원
+  const MEM_R = 1.0;                  // 메모리 가중치
+  const COM_R = 0.7;                  // 공통 가중치
+  const LEP_R = 0.0;                  // 비메모리 가중치
+  const SALARY = 8000;                // 평균 연봉 (만원)
+
+  // 내 사업부 선택 상태
+  let myDiv = 'mem';
+
+  // CL4 상태
+  let isCl4 = false;
+  let cl4Grade = '다';        // 기본값
+  let cl4Multiplier = 1.0;    // 비CL4 = 1.0
+
+  function recalc() {
+    const profit = parseFloat(profitSlider.value);          // 조
+    const rate = RATE;                                       // 확정 10.5%
+    const deptRatio = DEPT_RATIO;                            // 확정 4
+    const divRatio = DIV_RATIO;                              // 확정 6
+    const isActive = profit >= TRIGGER_PROFIT;               // 지급 조건 충족 여부
+
+    // 총 재원 (조 단위) — 영업이익 200조 미만 시 0
+    const totalFund = isActive ? profit * (rate / 100) : 0;
+    const totalFundManwon = totalFund * 10000 * 10000;      // 만원 (1조 = 10,000억 = 10^8만원)
+    // 실제로 1조 = 1억 만원이므로
+    const totalFundEok = totalFund * 10000;                 // 억원
+    const totalFundManwon2 = totalFundEok * 10000;          // 만원
+
+    // 부문 풀 (전원 균등)
+    const deptPool = totalFundManwon2 * (deptRatio / 10);   // 만원
+    // 사업부 풀
+    const divPool = totalFundManwon2 * (divRatio / 10);     // 만원
+
+    // 인원 / 가중치 (확정 상수)
+    const mH = MEM_HEAD;
+    const cH = COM_HEAD;
+    const lH = LEP_HEAD;
+    const mR = MEM_R;
+    const cR = COM_R;
+    const lR = LEP_R;
+
+    const totalHead = mH + cH + lH;
+    const weightedHead = mH * mR + cH * cR + lH * lR;
+
+    // 부문 풀 1인당 (전원 균등)
+    const deptPerPerson = totalHead > 0 ? deptPool / totalHead : 0;
+
+    // 사업부 풀 단가
+    const unitRate = weightedHead > 0 ? divPool / weightedHead : 0;
+
+    // 각 사업부 1인당
+    const memDeptVal = deptPerPerson;
+    const comDeptVal = deptPerPerson;
+    const lepDeptVal = deptPerPerson;
+
+    const memDivVal = unitRate * mR;
+    const comDivVal = unitRate * cR;
+    const lepDivVal = unitRate * lR;
+
+    const memTotal = memDeptVal + memDivVal;
+    const comTotal = comDeptVal + comDivVal;
+    const lepTotal = lepDeptVal + lepDivVal;
+
+    // Update displays - 주요 변수
+    document.getElementById('profitDisplay').textContent = profit + '조';
+    document.getElementById('totalTrillion').textContent = totalFund.toFixed(1) + '조';
+    document.getElementById('totalOk').textContent = isActive
+      ? '(' + Math.round(totalFundEok).toLocaleString('ko-KR') + '억원)'
+      : '· 지급 조건 미충족 (영업이익 < 200조)';
+
+    // 영업이익이 200조 미만이면 총 재원 박스 dimmed
+    const totalFundEl = document.querySelector('.total-fund');
+    if (totalFundEl) {
+      totalFundEl.classList.toggle('inactive', !isActive);
+    }
+
+    const salary = SALARY;
+
+    // Update results - 메모리 / 공통 / 비메모리
+    document.getElementById('memTotal').innerHTML = fmtCombined(memTotal, salary);
+    document.getElementById('comTotal').innerHTML = fmtCombined(comTotal, salary);
+    document.getElementById('lepTotal').innerHTML = fmtCombined(lepTotal, salary);
+    document.getElementById('memDept').textContent = fmt(memDeptVal);
+    document.getElementById('comDept').textContent = fmt(comDeptVal);
+    document.getElementById('lepDept').textContent = fmt(lepDeptVal);
+    document.getElementById('memDiv').textContent = fmt(memDivVal);
+    document.getElementById('comDiv').textContent = fmt(comDivVal);
+    document.getElementById('lepDiv').textContent = fmt(lepDivVal);
+
+    // 내 성과급 계산
+    const mySalary = parseInt(mySalarySlider.value);
+    const myOpiRate = parseInt(myOpiRateSlider.value);
+    document.getElementById('mySalaryDisplay').textContent =
+      mySalary.toLocaleString('ko-KR') + '만원';
+    document.getElementById('myOpiRateDisplay').textContent = myOpiRate + '%';
+
+    // 내가 속한 사업부의 1인당 성과급 (평균 연봉 8000 기준 금액)
+    let myDivAmount;
+    if (myDiv === 'mem') myDivAmount = memTotal;
+    else if (myDiv === 'com') myDivAmount = comTotal;
+    else myDivAmount = lepTotal;
+
+    // 사업부 성과급 비율 (평균 연봉 대비)
+    const myDivPct = salary > 0 ? myDivAmount / salary : 0;
+
+    // 1) 기존 OPI = 내 연봉 × OPI 비율
+    const myOpi = mySalary * (myOpiRate / 100);
+
+    // 2) 특별 성과급 = 내 연봉 × 사업부 1인당 성과급 비율
+    const myBonus = mySalary * myDivPct;
+
+    // 3) CL4 가산 = (OPI + 특별성과급) × (배수 - 1)
+    const myCl4Extra = (myOpi + myBonus) * (cl4Multiplier - 1);
+
+    // 합산 (세전)
+    const myGrossBonus = myOpi + myBonus + myCl4Extra;
+
+    // ── 세금: 연봉+성과급 합산 한계세 방식 ──
+    // 연봉만 받았을 때 세금 (기준치)
+    const baseDeduct = calcAllDeductions(mySalary);
+    // 연봉+성과급 받았을 때 세금
+    const totalDeduct = calcAllDeductions(mySalary + myGrossBonus);
+
+    // 마지널 = 성과급 때문에 추가로 내는 세금
+    const margIncome = totalDeduct.incomeTax - baseDeduct.incomeTax;
+    const margLocal  = totalDeduct.localTax  - baseDeduct.localTax;
+    const margNp     = totalDeduct.np        - baseDeduct.np;
+    const margHi     = totalDeduct.hi        - baseDeduct.hi;
+    const margLtc    = totalDeduct.ltc       - baseDeduct.ltc;
+    const margEmp    = totalDeduct.emp       - baseDeduct.emp;
+    const margTotal  = margIncome + margLocal + margNp + margHi + margLtc + margEmp;
+
+    const myNetVal = myGrossBonus - margTotal;
+    const deductPct = myGrossBonus > 0 ? Math.round((margTotal / myGrossBonus) * 100) : 0;
+
+    document.getElementById('myOpiDisplay').textContent = fmt(myOpi);
+    document.getElementById('myBonusDisplay').textContent = fmt(myBonus);
+
+    // CL4 가산 행 표시/숨김
+    const cl4Row = document.getElementById('cl4ExtraRow');
+    if (isCl4) {
+      cl4Row.style.display = 'flex';
+      document.getElementById('cl4MultLabel').textContent = '(' + cl4Grade + ')';
+      document.getElementById('myCl4ExtraDisplay').textContent = fmt(myCl4Extra);
+    } else {
+      cl4Row.style.display = 'none';
+    }
+
+    document.getElementById('myTotalDisplay').textContent = fmt(myGrossBonus);
+    document.getElementById('myTaxDisplay').textContent = fmt(margIncome);
+    document.getElementById('myLocalDisplay').textContent = fmt(margLocal);
+    document.getElementById('myNpDisplay').textContent = fmt(margNp);
+    document.getElementById('myHiDisplay').textContent = fmt(margHi);
+    document.getElementById('myLtcDisplay').textContent = fmt(margLtc);
+    document.getElementById('myEmpDisplay').textContent = fmt(margEmp);
+    document.getElementById('myDeductDisplay').textContent =
+      fmt(margTotal) + ' (' + deductPct + '%)';
+    document.getElementById('myNetDisplay').textContent = fmt(myNetVal);
+  }
+
+  // 사업부 선택 버튼 바인딩
+  document.querySelectorAll('.div-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.div-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      myDiv = btn.dataset.div;
+      recalc();
+    });
+  });
+
+  // CL4 여부 토글
+  document.querySelectorAll('.cl4-btn[data-cl4]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cl4-btn[data-cl4]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      isCl4 = (btn.dataset.cl4 === 'yes');
+
+      const gradeField = document.querySelector('.cl4-grade-field');
+      if (isCl4) {
+        gradeField.classList.remove('hidden');
+        // 첫 진입 시 기본 고과 '다' 활성화
+        if (!document.querySelector('.cl4-btn[data-grade].active')) {
+          const firstGrade = document.querySelector('.cl4-btn[data-grade="다"]');
+          if (firstGrade) firstGrade.classList.add('active');
+          cl4Grade = '다';
+          cl4Multiplier = 1.0;
+        }
+        document.getElementById('cl4GradeDisplay').textContent = cl4Grade;
+      } else {
+        gradeField.classList.add('hidden');
+        cl4Multiplier = 1.0;
+        document.getElementById('cl4GradeDisplay').textContent = '—';
+      }
+      recalc();
+    });
+  });
+
+  // 고과 선택 (가/나/다)
+  document.querySelectorAll('.cl4-btn[data-grade]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cl4-btn[data-grade]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      cl4Grade = btn.dataset.grade;
+      cl4Multiplier = cl4Grade === '가' ? 1.4 : cl4Grade === '나' ? 1.2 : 1.0;
+      document.getElementById('cl4GradeDisplay').textContent = cl4Grade;
+      recalc();
+    });
+  });
+
+  // 초기에 고과 필드 숨김 (CL4 = 아니오 기본값)
+  document.querySelector('.cl4-grade-field').classList.add('hidden');
+
+  // Bind events
+  [profitSlider, mySalarySlider, myOpiRateSlider].forEach(el => {
+    el.addEventListener('input', recalc);
+    el.addEventListener('change', recalc);
+  });
+
+  // Initial calc
+  recalc();
+})();
+</script>
+</body>
+</html>
