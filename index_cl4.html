@@ -190,18 +190,30 @@
   }
 
   .total-fund.inactive {
-    opacity: 0.55;
+    opacity: 0.7;
     background: rgba(245, 168, 197, 0.04);
     border-color: rgba(245, 168, 197, 0.3);
   }
 
   .total-fund.inactive .total-fund-value {
-    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .total-fund.inactive #totalTrillion {
+    font-size: 17px;
+    color: var(--pink);
+    font-weight: 700;
   }
 
   .total-fund.inactive #totalOk {
-    color: var(--pink);
-    font-weight: 600;
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 11px;
+    margin-left: 0;
+    white-space: nowrap;
   }
 
   .fixed-info {
@@ -1063,10 +1075,15 @@
 
     // Update displays - 주요 변수
     document.getElementById('profitDisplay').textContent = profit + '조';
-    document.getElementById('totalTrillion').textContent = totalFund.toFixed(1) + '조';
-    document.getElementById('totalOk').textContent = isActive
-      ? '(' + Math.round(totalFundEok).toLocaleString('ko-KR') + '억원)'
-      : '· 지급 조건 미충족 (영업이익 < 200조)';
+    if (isActive) {
+      document.getElementById('totalTrillion').textContent = totalFund.toFixed(1) + '조';
+      document.getElementById('totalOk').textContent =
+        '(' + Math.round(totalFundEok).toLocaleString('ko-KR') + '억원)';
+    } else {
+      document.getElementById('totalTrillion').textContent = '미지급';
+      document.getElementById('totalOk').textContent =
+        '영업이익 ' + profit + '조 < 200조';
+    }
 
     // 영업이익이 200조 미만이면 총 재원 박스 dimmed
     const totalFundEl = document.querySelector('.total-fund');
