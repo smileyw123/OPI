@@ -125,6 +125,47 @@
   .field-value.yellow { color: var(--yellow); }
   .field-value.pink { color: var(--pink); }
   .field-value.green { color: var(--green); }
+  .field-value.cyan { color: var(--cyan); }
+
+  .field-value.year-trigger-hint {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* Year selector (2-button toggle) */
+  .year-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .year-btn {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 10px 8px;
+    border-radius: 8px;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .year-btn:hover {
+    border-color: #444;
+    color: var(--text);
+  }
+
+  .year-btn.cyan.active {
+    background: rgba(142, 217, 240, 0.12);
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 8px rgba(142, 217, 240, 0.15);
+  }
 
   /* Slider */
   input[type="range"] {
@@ -586,6 +627,14 @@
     margin-left: 4px;
   }
 
+  .opi-cap-hint.year-hint {
+    background: rgba(142, 217, 240, 0.06);
+    border-left-color: var(--cyan);
+  }
+  .opi-cap-hint.year-hint span {
+    color: var(--cyan);
+  }
+
   /* Mobile */
   @media (max-width: 480px) {
     body { padding: 16px 12px 40px; }
@@ -608,8 +657,21 @@
 <body>
 <div class="container">
   <header>
-    <div class="badge">OPI 계산기 (26년도 기준)</div>
+    <div class="badge" id="badgeDisplay">OPI 계산기 (26년도 기준)</div>
   </header>
+
+  <!-- 연도 선택 -->
+  <div class="card">
+    <div class="field">
+      <div class="field-row">
+        <span class="field-label">기준 연도</span>
+      </div>
+      <div class="year-selector">
+        <button class="year-btn cyan active" data-year="2026" type="button">26 ~ 28년</button>
+        <button class="year-btn cyan" data-year="2029" type="button">29년 이후</button>
+      </div>
+    </div>
+  </div>
 
   <!-- 주요 변수 -->
   <div class="card">
@@ -629,7 +691,7 @@
       <span class="fixed-info-sep">·</span>
       <span class="fixed-info-item"><span class="fixed-info-label">부문 : 사업부</span> <span class="fixed-info-value pink">4 : 6</span></span>
       <span class="fixed-info-sep">·</span>
-      <span class="fixed-info-item"><span class="fixed-info-label">지급 조건</span> <span class="fixed-info-value cyan">영업이익 ≥ 200조</span></span>
+      <span class="fixed-info-item"><span class="fixed-info-label">지급 조건</span> <span class="fixed-info-value cyan" id="fixedTriggerValue">영업이익 ≥ 200조</span></span>
     </div>
 
     <div class="total-fund">
@@ -962,9 +1024,17 @@
   const mySalarySlider = document.getElementById('mySalarySlider');
   const myOpiRateSlider = document.getElementById('myOpiRateSlider');
 
+  // 연도 그룹 선택 상태 (2026 = 26~28년 / 2029 = 29년 이후)
+  let selectedYear = 2026;
+
   // ─── 확정된 상수 ───
   const RATE = 10.5;                  // 성과급 재원 비율 (%)
-  const TRIGGER_PROFIT = 200;         // 특별성과급 지급 조건 (영업이익 ≥ 200조)
+  // 연도별 지급 조건 (영업이익 임계값, 단위: 조)
+  // 2026~2028: 200조, 2029~2035: 100조
+  function triggerByYear(year) {
+    return (year >= 2026 && year <= 2028) ? 200 : 100;
+  }
+  let TRIGGER_PROFIT = 200;           // 초기값, 연도 변경 시 갱신
   const DEPT_RATIO = 4;               // 부문 풀 비율 (4:6)
   const DIV_RATIO  = 6;               // 사업부 풀 비율
   const MEM_HEAD = 27400;             // 메모리 인원
@@ -980,10 +1050,19 @@
 
   function recalc() {
     const profit = parseFloat(profitSlider.value);          // 조
+    const year = selectedYear;
+    TRIGGER_PROFIT = triggerByYear(year);
     const rate = RATE;                                       // 확정 10.5%
     const deptRatio = DEPT_RATIO;                            // 확정 4
     const divRatio = DIV_RATIO;                              // 확정 6
     const isActive = profit >= TRIGGER_PROFIT;               // 지급 조건 충족 여부
+
+    // 배지 / 힌트 갱신
+    const yearLabel = (year === 2026) ? '26~28' : '29+';
+    document.getElementById('badgeDisplay').textContent =
+      'OPI 계산기 (' + yearLabel + '년도 기준)';
+    document.getElementById('fixedTriggerValue').textContent =
+      '영업이익 ≥ ' + TRIGGER_PROFIT + '조';
 
     // 총 재원 (조 단위) — 영업이익 200조 미만 시 0
     const totalFund = isActive ? profit * (rate / 100) : 0;
@@ -1036,7 +1115,7 @@
     } else {
       document.getElementById('totalTrillion').textContent = '미지급';
       document.getElementById('totalOk').textContent =
-        '영업이익 ' + profit + '조 < 200조';
+        '영업이익 ' + profit + '조 < ' + TRIGGER_PROFIT + '조';
     }
 
     // 영업이익이 200조 미만이면 총 재원 박스 dimmed
@@ -1145,6 +1224,92 @@
   [profitSlider, mySalarySlider, myOpiRateSlider].forEach(el => {
     el.addEventListener('input', recalc);
     el.addEventListener('change', recalc);
+  });
+
+  // 연도 토글 버튼
+  document.querySelectorAll('.year-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedYear = parseInt(btn.dataset.year);
+      recalc();
+    });
+  });
+
+  // ─── 슬라이더 thumb-only 드래그 ───
+  // 트랙 클릭/터치로 값이 점프하는 것을 완전히 차단
+  // 핵심: input 이벤트 자체를 capture phase에서 가로채서 검증
+  document.querySelectorAll('input[type="range"]').forEach(slider => {
+    let thumbActive = false;
+    let lastValue = parseFloat(slider.value);
+
+    function getThumbPosition(slider) {
+      const min = parseFloat(slider.min);
+      const max = parseFloat(slider.max);
+      const val = parseFloat(slider.value);
+      const ratio = (val - min) / (max - min);
+      const rect = slider.getBoundingClientRect();
+      const thumbWidth = 20;
+      const trackWidth = rect.width - thumbWidth;
+      return rect.left + thumbWidth / 2 + ratio * trackWidth;
+    }
+
+    function isPointOnThumb(clientX, slider) {
+      const thumbX = getThumbPosition(slider);
+      const tolerance = 22;
+      return Math.abs(clientX - thumbX) <= tolerance;
+    }
+
+    // ── 포인터 다운 시 thumb 위인지 확인 ──
+    slider.addEventListener('pointerdown', (e) => {
+      if (isPointOnThumb(e.clientX, slider)) {
+        thumbActive = true;
+      } else {
+        thumbActive = false;
+        e.preventDefault();
+      }
+    });
+
+    slider.addEventListener('pointerup', () => {
+      thumbActive = false;
+    });
+
+    slider.addEventListener('pointercancel', () => {
+      thumbActive = false;
+    });
+
+    // ── 터치 (모바일 보강) ──
+    slider.addEventListener('touchstart', (e) => {
+      const touch = e.touches[0];
+      if (isPointOnThumb(touch.clientX, slider)) {
+        thumbActive = true;
+      } else {
+        thumbActive = false;
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    slider.addEventListener('touchend', () => { thumbActive = false; });
+    slider.addEventListener('touchcancel', () => { thumbActive = false; });
+
+    // ── 핵심: input 이벤트 capture phase 인터셉터 ──
+    // thumb 드래그가 아닌 상태에서 값이 바뀌면 차단
+    // 키보드 화살표는 1 step만 움직이므로 통과
+    slider.addEventListener('input', (e) => {
+      const newValue = parseFloat(slider.value);
+      const step = parseFloat(slider.step) || 1;
+      const diff = Math.abs(newValue - lastValue);
+
+      if (!thumbActive && diff > step * 1.5) {
+        // 트랙 클릭/터치로 인한 큰 점프 → 원래 값으로 복원
+        slider.value = lastValue;
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        return;
+      }
+      // 정상 변경 → lastValue 동기화 후 다음 핸들러로 전파
+      lastValue = newValue;
+    }, true); // true = capture phase (bubble보다 먼저 실행)
   });
 
   // Initial calc
