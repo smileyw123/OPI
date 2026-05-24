@@ -524,6 +524,39 @@
   .my-result-value.green { color: var(--green); }
   .my-result-value.cyan { color: var(--cyan); }
 
+  .stock-note {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .my-result-row.stock {
+    padding: 5px 0;
+  }
+
+  .my-result-row.stock > span:first-child {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .stock-share {
+    display: inline-block;
+    padding: 1px 6px;
+    margin-left: 6px;
+    background: rgba(168, 230, 189, 0.1);
+    border: 1px solid rgba(168, 230, 189, 0.3);
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--green);
+  }
+
   .my-result-row {
     display: flex;
     justify-content: space-between;
@@ -872,6 +905,20 @@
         <span class="my-result-label">실수령액 (세후)</span>
         <span class="my-result-value green" id="myNetDisplay">0만원</span>
       </div>
+
+      <div class="stock-note">주식 지급 · 3분할</div>
+      <div class="my-result-row stock">
+        <span>즉시 매도 가능 <span class="stock-share">1/3</span></span>
+        <span id="stock1Display">0만원</span>
+      </div>
+      <div class="my-result-row stock">
+        <span>1년 보유 <span class="stock-share">1/3</span></span>
+        <span id="stock2Display">0만원</span>
+      </div>
+      <div class="my-result-row stock">
+        <span>2년 보유 <span class="stock-share">1/3</span></span>
+        <span id="stock3Display">0만원</span>
+      </div>
     </div>
   </div>
 
@@ -1173,6 +1220,12 @@
     document.getElementById('myDeductDisplay').textContent =
       fmt(margTotal) + ' (' + deductPct + '%)';
     document.getElementById('myNetDisplay').textContent = fmt(myNetVal);
+
+    // 주식 3분할 지급
+    const stockShare = myNetVal / 3;
+    document.getElementById('stock1Display').textContent = fmt(stockShare);
+    document.getElementById('stock2Display').textContent = fmt(stockShare);
+    document.getElementById('stock3Display').textContent = fmt(stockShare);
   }
 
   // 사업부 선택 버튼 바인딩
