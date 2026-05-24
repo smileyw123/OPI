@@ -228,6 +228,8 @@
     align-items: center;
     margin-top: 20px;
     transition: opacity 0.2s;
+    height: 56px;
+    box-sizing: border-box;
   }
 
   .total-fund.inactive {
@@ -237,24 +239,20 @@
   }
 
   .total-fund.inactive .total-fund-value {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 2px;
+    display: inline-flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 8px;
+    line-height: 1;
   }
 
   .total-fund.inactive #totalTrillion {
-    font-size: 17px;
     color: var(--pink);
-    font-weight: 700;
+    font-size: 17px;
   }
 
   .total-fund.inactive #totalOk {
-    color: var(--muted);
-    font-weight: 400;
-    font-size: 11px;
     margin-left: 0;
-    white-space: nowrap;
   }
 
   .fixed-info {
@@ -1115,7 +1113,7 @@
     } else {
       document.getElementById('totalTrillion').textContent = '미지급';
       document.getElementById('totalOk').textContent =
-        '영업이익 ' + profit + '조 < ' + TRIGGER_PROFIT + '조';
+        '(' + profit + '조 < ' + TRIGGER_PROFIT + '조)';
     }
 
     // 영업이익이 200조 미만이면 총 재원 박스 dimmed
