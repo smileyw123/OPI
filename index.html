@@ -818,17 +818,17 @@
         <span class="my-result-value green" id="myNetDisplay">0만원</span>
       </div>
 
-      <div class="stock-note">주식 지급 · 3분할</div>
+      <div class="stock-note">지급 형태 · OPI 현금 + 특별성과급 주식 3분할</div>
       <div class="my-result-row stock">
-        <span>즉시 매도 가능 <span class="stock-share">1/3</span></span>
+        <span>즉시 매도 가능 <span class="stock-share">OPI + 주식 1/3</span></span>
         <span id="stock1Display">0만원</span>
       </div>
       <div class="my-result-row stock">
-        <span>1년 보유 <span class="stock-share">1/3</span></span>
+        <span>1년 보유 <span class="stock-share">주식 1/3</span></span>
         <span id="stock2Display">0만원</span>
       </div>
       <div class="my-result-row stock">
-        <span>2년 보유 <span class="stock-share">1/3</span></span>
+        <span>2년 보유 <span class="stock-share">주식 1/3</span></span>
         <span id="stock3Display">0만원</span>
       </div>
     </div>
@@ -1114,9 +1114,19 @@
       fmt(margTotal) + ' (' + deductPct + '%)';
     document.getElementById('myNetDisplay').textContent = fmt(myNetVal);
 
-    // 주식 3분할 지급
-    const stockShare = myNetVal / 3;
-    document.getElementById('stock1Display').textContent = fmt(stockShare);
+    // 지급 형태 분할
+    // OPI는 전액 현금, 특별성과급은 주식 3분할 (즉시매도/1년/2년)
+    const grossOpi = myOpi;                              // 현금
+    const grossStock = myBonus;                          // 주식 (3분할 대상)
+
+    // 세후 비율로 안분 (세금이 OPI/주식에 같은 비율로 적용된다고 가정)
+    const netRatio = myGrossBonus > 0 ? myNetVal / myGrossBonus : 0;
+    const netOpi = grossOpi * netRatio;
+    const netStock = grossStock * netRatio;
+
+    const stockShare = netStock / 3;
+    // 즉시 매도 가능 = OPI(현금) + 주식 1/3
+    document.getElementById('stock1Display').textContent = fmt(netOpi + stockShare);
     document.getElementById('stock2Display').textContent = fmt(stockShare);
     document.getElementById('stock3Display').textContent = fmt(stockShare);
   }
