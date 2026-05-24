@@ -239,20 +239,11 @@
   }
 
   .total-fund.inactive .total-fund-value {
-    display: inline-flex;
     flex-direction: row-reverse;
-    align-items: center;
-    gap: 8px;
-    line-height: 1;
   }
 
   .total-fund.inactive #totalTrillion {
     color: var(--pink);
-    font-size: 17px;
-  }
-
-  .total-fund.inactive #totalOk {
-    margin-left: 0;
   }
 
   .fixed-info {
@@ -299,16 +290,23 @@
 
   .total-fund-value {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 22px;
+    font-size: 17px;
     font-weight: 700;
     color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1;
   }
 
   .total-fund-value small {
     font-size: 13px;
     color: var(--muted);
-    margin-left: 8px;
     font-weight: 400;
+  }
+
+  .total-fund-value small:empty {
+    display: none;
   }
 
   /* Combined Division Card */
@@ -1201,8 +1199,7 @@
     document.getElementById('profitDisplay').textContent = profit + '조';
     if (isActive) {
       document.getElementById('totalTrillion').textContent = totalFund.toFixed(1) + '조';
-      document.getElementById('totalOk').textContent =
-        '(' + Math.round(totalFundEok).toLocaleString('ko-KR') + '억원)';
+      document.getElementById('totalOk').textContent = '';
     } else {
       document.getElementById('totalTrillion').textContent = '미지급';
       document.getElementById('totalOk').textContent =
